@@ -1,2 +1,2 @@
 # philosophy
-Python script to solve the Wikipedia Getting to Philosophy problem
+Python script to solve the <a href="https://en.wikipedia.org/wiki/Wikipedia:Getting_to_Philosophy">Wikipedia Getting to Philosophy</a> problem
