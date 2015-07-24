@@ -3,9 +3,10 @@ File: philosophy_exceptions.py
 Description: Defines classes for various exceptions that may be
 encountered during a search for a wikipedia path to philosophy.
 Got the idea from http://docs.python-guide.org/en/latest/writing/style/
-that raising exceptions during the search might be better than having 
-several nested if statements.
-
+that raising exceptions during the search might be better than returning
+from the search at various places with unique return values and unique
+error messages. The downside is the error messages could be more descriptive.
+Would fix that next by adding more Attributes to each exception.
 """
 
 
