@@ -19,6 +19,12 @@ INTERNAL_PAGE_IDENTIFIER = "Wikipedia:"
 #href identifier for wikipedia user pages
 USER_IDENTIFIER = "User:"
 
+#href identifier for a file page
+FILE_IDENTIFIER = "File:"
+
+#href identifier for a help page
+HELP_IDENTIFIER = "Help:"
+
 #class identifier for the main text on a wikipedia page
 MAIN_TEXT_IDENTIFIER = "mw-content-text"
 

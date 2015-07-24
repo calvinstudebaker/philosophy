@@ -80,20 +80,28 @@ valid <a> tag that can be used as a link in the path to philosophy. In order
 for a link to be valid, it must be an <a> tag, it must be a standard link (no
 special classes like a redirecting link or a citation link), it must have an
 href that links to an article, it cannot link to a special wikipedia page such
-as the "citations needed" description page, and it cannot link to a wikipedia user
-page. It must be a standard wikipedia article.
+as the "citations needed" description, user page, file page, etc.
+It must be a standard wikipedia article.
 
 """
 def is_valid_wikilink_a_href_tag(tag):
+
+	special_identifiers = [
+		constants.INTERNAL_PAGE_IDENTIFIER,
+		constants.USER_IDENTIFIER,
+		constants.HELP_IDENTIFIER,
+		constants.FILE_IDENTIFIER
+	]
+
 	is_a_tag = tag.name == "a"
 	has_no_special_classes = not tag.has_attr('class')
 	has_href = tag.has_attr('href')
 	is_article = has_href and tag['href'].startswith(constants.WIKI_DIRECTORY)
-	not_a_special_wikipedia_page = has_href and constants.INTERNAL_PAGE_IDENTIFIER not in tag['href']
-	not_a_user_wikipedia_page = has_href and constants.USER_IDENTIFIER not in tag['href']
+	is_a_special_wikipedia_page = has_href and \
+		any(identifier in tag['href'] for identifier in special_identifiers)
 	
 	return is_a_tag and has_no_special_classes and is_article \
-		and not_a_special_wikipedia_page and not_a_user_wikipedia_page
+		and not is_a_special_wikipedia_page
 
 """
 Function: get_parsed_html
@@ -207,7 +215,8 @@ Function: create_path_to_philosophy
 Arguments: (string) url. The wikipedia url to begin the search from.
 Returns: (list) a list of urls starting with given url and ending with
 the url for the wikipedia page for Philosophy. Each url in the list is
-the first link in the page from the previous url. 
+the first link in the page from the previous url.
+Prints the path as it goes, and the resulting number of hops.
 If a cycle is found in the path, a CycleError exception is raised. 
 If the search goes on for too long and the limit of hops is reached, 
 a HopLimitError exception is raised.
@@ -218,11 +227,11 @@ def create_path_to_philosophy(url):
 
 	#start with the given url
 	path_to_philosophy.append(url)
+	print url
 
 	#as long as we haven't made it to philosophy and we are
 	#still under the hop limit, continue to follow links
 	while not is_end_state(url) and hops < constants.MAX_HOPS:
-
 		#hop to the next url
 		url = get_first_wikilink_url_on_page(url)
 
@@ -231,13 +240,16 @@ def create_path_to_philosophy(url):
 			raise philosophy_exceptions.CycleError(url)
 
 		#add the url to the path
+		print url
 		path_to_philosophy.append(url)
 		hops += 1
 
-	#if the loop ended and we are not yet at Philosophy, we hit the limit
+	#if the loop ended and we are not yet at Philosophy, we hit the hop limit
 	#raise a HopLimitError exception
 	if not is_end_state(url):
 		raise philosophy_exceptions.HopLimitError(hops)
+
+	print str(hops) + " hops"
 
 	return path_to_philosophy
 
@@ -261,8 +273,12 @@ def main():
 	#create the path to philosophy
 	path_to_philosophy = create_path_to_philosophy(url)
 
+	#EDIT: decided it was nicer to watch the path created as it goes rather
+	#than having it all printed at the end. create_path_to_philosophy now does
+	#the printing
+
 	#print the result
-	print_path(path_to_philosophy)
+	#print_path(path_to_philosophy)
 	
 if __name__ == "__main__":
 	main()
